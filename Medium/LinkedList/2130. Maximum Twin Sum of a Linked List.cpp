@@ -9,48 +9,46 @@
  * };
  */
 class Solution {
-    private:
-    int value(ListNode* head,int n){
-        n = 0 ;
-        while(temp->next){
-            n++;
-        }
-        return n;
-    }
 public:
     int pairSum(ListNode* head) {
-        Listnode* temp = head;
-        int n  = 0;
-        int size = value(temp,n);
-        
+        ListNode* temp = head;
+        stack<int> s;
+        while(temp){
+            s.push(temp->val);
+            temp = temp->next;
+        }
+        int maxValue = 0 ;
+        while(s.size()/2){
+            maxValue = max(maxValue,s.top()+head->val);
+            head = head->next;
+            s.pop();
+        }
+        return maxValue;
     }
 };
+
 class Solution {
 public:
     int pairSum(ListNode* head) {
-        ListNode* slowPtr = head;
-        ListNode* fastPtr = head;
-        ListNode* prevPtr = nullptr;
-
-        // Reverse the first half of the linked list
-        while (fastPtr != nullptr && fastPtr->next != nullptr) {
-            fastPtr = fastPtr->next->next;
-            ListNode* nextNode = slowPtr->next;
-            slowPtr->next = prevPtr;
-            prevPtr = slowPtr;
-            slowPtr = nextNode;
+        ListNode *fast=head,*slow=head;
+        int maxSum=0;
+        while(fast and fast->next){
+            slow=slow->next;
+            fast=fast->next->next;
+        }
+        
+        ListNode *next=NULL,*prev=NULL;
+        while(slow!=NULL){
+            next=slow->next;
+            slow->next=prev;
+            prev=slow;
+            slow=next;
         }
 
-        // Adjust pointers if the length of the linked list is odd
-        if (fastPtr != nullptr) {
-            slowPtr = slowPtr->next;
-        }
-
-        int maxSum = std::numeric_limits<int>::min();
-        while (slowPtr != nullptr) {
-            maxSum = std::max(maxSum, slowPtr->val + prevPtr->val);
-            slowPtr = slowPtr->next;
-            prevPtr = prevPtr->next;
+        while(prev){
+            maxSum=max(maxSum,head->val+prev->val);
+            head=head->next;
+            prev=prev->next;
         }
         return maxSum;
     }
